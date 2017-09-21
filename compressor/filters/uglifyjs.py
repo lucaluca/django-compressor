@@ -9,5 +9,5 @@ class UglifyJSFilter(CompilerFilter):
     )
 
     def __init__(self, *args, **kwargs):
-        super(UglifyFilter, self).__init__(*args, **kwargs)
+        super(UglifyJSFilter, self).__init__(*args, **kwargs)
         self.command
