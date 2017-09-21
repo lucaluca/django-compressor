@@ -39,7 +39,7 @@ Base settings
     like this::
 
         <script type="text/javascript" src="/static/js/site-base.js"></script>
-        <script type="text/javascript" src="/static/CACHE/js/8dd1a2872443.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/static/CACHE/js/awesome.8dd1a2872443.js" charset="utf-8"></script>
 
 .. attribute:: COMPRESS_URL
 
@@ -77,15 +77,18 @@ Backend settings
 
     - ``compressor.filters.css_default.CssAbsoluteFilter``
 
-      A filter that normalizes the URLs used in ``url()`` CSS statements.
+      A filter that normalizes the URLs used in ``url()`` CSS statements. This
+      is necessary since the output css files produced by Django Compressor
+      are in a different location than the source files and relative paths
+      might have become invalid. The filter also appends a hash as query string
+      to the normalized URLs to help with cache busting.
 
       .. attribute:: COMPRESS_CSS_HASHING_METHOD
 
-         The method to use when calculating the suffix to append to URLs in
-         your processed CSS files. Either ``None``, ``'mtime'`` (default) or
-         ``'content'``. Use the ``None`` if you want to completely disable that
-         feature, and the ``'content'`` in case you're using multiple servers
-         to serve your content.
+         The method to use when calculating the query string.  Either ``None``,
+         ``'mtime'`` (default) or ``'content'``. Use the ``None`` if you want
+         to completely disable that feature, and the ``'content'`` in case
+         you're using multiple servers to serve your content.
 
     - ``compressor.filters.css_default.CssRelativeFilter``
 
@@ -301,7 +304,7 @@ Backend settings
 
     This would give you something like this::
 
-        <script type="text/javascript" src="/static/CACHE/js/8dd1a2872443.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/static/CACHE/js/output.8dd1a2872443.js" charset="utf-8"></script>
 
     The same works for less_, too:
 
@@ -322,7 +325,7 @@ Backend settings
 
     Which would be rendered something like::
 
-        <link rel="stylesheet" href="/static/CACHE/css/8ccf8d877f18.css" type="text/css" charset="utf-8">
+        <link rel="stylesheet" href="/static/CACHE/css/output.8ccf8d877f18.css" type="text/css" charset="utf-8">
 
     .. _less: http://lesscss.org/
     .. _CoffeeScript: http://coffeescript.org/
@@ -340,6 +343,12 @@ Backend settings
 
       A subclass of the default storage backend, which will additionally
       create ``*.gz`` files of each of the compressed files.
+
+    * ``'compressor.storage.BrotliCompressorFileStorage'``
+
+      A subclass of the default storage backend, which will additionally
+      create ``*.br`` files of each of the compressed files. It is using
+      the maximum level of compression (11) so compression speed will be low.
 
 .. attribute:: COMPRESS_PARSER
 
